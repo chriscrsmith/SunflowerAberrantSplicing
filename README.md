@@ -134,7 +134,7 @@ Below is an example workflow using Chris's scripts.
 
 
 
-10.  Taking a step back, processing SNPs resulting from bwa alignments + samtools mpileup. First, identifying 
+10. Taking a step back, processing SNPs resulting from bwa alignments + samtools mpileup. First, identifying 
     SNPs that are fixed between parent genotypes.
 
     ###
