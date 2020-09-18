@@ -80,7 +80,7 @@ Below is an example workflow using Chris's scripts.
     we can sum each samples' expression across all alleles for the same splice isoform.
  
     ###
-    python consolidate_isoforms_v2.py transgressive_splicing.txt good_isoforms.txt\
+    python consolidate_isoforms_v2.py transgressive_splicing.txt good_isoforms.txt Trinity_singleline.fasta \
     	   > transgressive_splicing_consolidatedIsos.txt
     ###
 
