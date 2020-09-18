@@ -1,14 +1,20 @@
 
 
+
+# copied from v2. Command line parameter for the transcriptome filepath
+
+
+
 import sys, os
 from operator import itemgetter
 
-min_expression_next_closest_isoform = 1 # I'm requiring each* parent to have this much of the next-most-similar isoform to the transgressive isoform
+min_expression_next_closest_isoform = 1 # important parameter; I'm requiring each* parent to have this much of the next-most-similar isoform to the transgressive isoform
 min_exon_size = 25 # requiring a >=10bp exon to differentiate the transgressive and the next most similar isoform. 
 max_polymorphisms_per_100bp = 5
 
 trans_path = sys.argv[1]
 goodisos_path = sys.argv[2]
+trinity_path = sys.argv[3]
 
 
 
@@ -110,8 +116,8 @@ for trans_iso in list_of_trans:
             ###### EMBOSS needle (pairwise sequence alignment) #####
             if len(good_isos[old_gene][new_gene]) == 2:
                 ids = list(good_isos[old_gene][new_gene])
-                os.system( "grep -w -A 1 " + ids[0] + " /media/baswhd/ChrisData/Sunflowers/2020/Transcriptome/NewAssembly/Trinity_2019.fasta >> temp1.fa" )
-                os.system( "grep -w -A 1 " + ids[1] + " /media/baswhd/ChrisData/Sunflowers/2020/Transcriptome/NewAssembly/Trinity_2019.fasta >> temp2.fa" )
+                os.system( "grep -w -A 1 " + ids[0] + " " + trinity_path + " >> temp1.fa" )
+                os.system( "grep -w -A 1 " + ids[1] + " " + trinity_path + " >> temp2.fa" )
                 os.system( "needle temp1.fa temp2.fa -gapopen 10 -gapextend 0.5 -outfile temp1.needle 2> stderr.txt" )
                 seqs = {} # initialize empty sequence dictionary
                 with open("temp1.needle") as infile:
@@ -137,7 +143,7 @@ for trans_iso in list_of_trans:
             ##### MUSCLE (multiple sequence alignment) #####
             else:
                 for iso in good_isos[old_gene][new_gene]:
-                    os.system( "grep -w -A 1 " + iso + " /media/baswhd/ChrisData/Sunflowers/2020/Transcriptome/NewAssembly/Trinity_2019.fasta >> temp1.fa" )
+                    os.system( "grep -w -A 1 " + iso + " " + trinity_path + " >> temp1.fa" )
                 # unindent; only want to run muscle once per gene
                 os.system( "muscle3.8.31_i86linux64 -in temp1.fa -out temp1.muscle 2> stderr.txt" )
                 with open( "temp1.muscle" ) as infile:
