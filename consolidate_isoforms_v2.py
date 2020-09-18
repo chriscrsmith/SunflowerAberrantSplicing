@@ -1,10 +1,5 @@
 
 
-
-# copied from v2. Command line parameter for the transcriptome filepath
-
-
-
 import sys, os
 from operator import itemgetter
 
