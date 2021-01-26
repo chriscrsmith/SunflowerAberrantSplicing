@@ -1,5 +1,5 @@
-# SunflowerTransgressiveSplicing
-Code used for sunflower transgressive splicing project
+# SunflowerAberrantSplicing
+Code used for sunflower aberrant splicing project
 
 
 
