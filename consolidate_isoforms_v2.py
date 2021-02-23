@@ -120,13 +120,16 @@ for trans_iso in list_of_trans:
                     seq1 = ""
                     seq2 = ""
                     for line in infile:
-                        if line[0] != "#" and line != "\n" and "|" not in line:
+                        if "." in line:
+                            print "dot", line
+                        if line[0] != "#" and line != "\n" and "|" not in line and "." not in line:
                             newline = line.strip().split()
                             if newline != []: # this is necessary (filters out stretches of nonmatching positions)
                                 line_number += 1
                                 if line_number % 2 == 1: # odd numbered lines                                                                                               
                                     seq1 += line.split()[2]
-                                else:                    # even numbered lines                                                                                                                 
+                                else:                    # even numbered lines
+                                    print line
                                     seq2 += line.split()[2]
                 seqs[ids[0]] = str(seq1)
                 seqs[ids[1]] = str(seq2)
@@ -140,7 +143,7 @@ for trans_iso in list_of_trans:
                 for iso in good_isos[old_gene][new_gene]:
                     os.system( "grep -w -A 1 " + iso + " " + trinity_path + " >> temp1.fa" )
                 # unindent; only want to run muscle once per gene
-                os.system( "muscle3.8.31_i86linux64 -in temp1.fa -out temp1.muscle 2> stderr.txt" )
+                os.system( "muscle -in temp1.fa -out temp1.muscle 2> stderr.txt" )
                 with open( "temp1.muscle" ) as infile:
                     seqs = {} # initialize empty sequence dictionary
                     seq = "" # initialize first sequence
@@ -172,38 +175,31 @@ for trans_iso in list_of_trans:
 
 
             ##### find pairs that are overlapping #####
-            loop_again = True
-            if len(alternative_alleles) > 0:
-                while loop_again == True:
-                    loop_again = False
-                    new_list = []
-                    for pair1 in range(len(alternative_alleles)-1):
-                        new_set = list(alternative_alleles[pair1])
-                        for pair2 in range(pair1 + 1, len(alternative_alleles)):
-                            for allele in alternative_alleles[pair2]:
-                                if allele in alternative_alleles[pair1]:
-                                    loop_again = True
-                                    for other_allele in alternative_alleles[pair2]:
-                                        if other_allele not in new_set:
-                                            new_set.append(other_allele)
-                        new_list.append(new_set)
-                    last_one_uniqe = True
-                    for allel in alternative_alleles[-1]:
-                        for new_sett in new_list:
-                            if allel in new_sett:
-                                last_one_uniqe = False
-                    if last_one_uniqe == True:
-                        new_list.append(alternative_alleles[-1])
-                    alternative_alleles = list(new_list)
-
-
-
+            new_set = [] 
+            while len(alternative_alleles) > 0:
+                delete_list = [ alternative_alleles[0] ] 
+                new_cluster = list(alternative_alleles[0]) 
+                for pair in range(1, len(alternative_alleles)):
+                    for iso in new_cluster:
+                        if iso in alternative_alleles[pair]:
+                            new_cluster = new_cluster + alternative_alleles[pair]
+                            delete_list.append(alternative_alleles[pair])
+                new_cluster = list(set(new_cluster))
+                new_set.append(new_cluster)
+                for pair in delete_list:
+                    if pair in alternative_alleles:
+                        alternative_alleles.remove(pair)
                     
-                    ##### output #####
-                    outline = []
-                    for cluster in alternative_alleles:
-                        outline.append(",".join(cluster))
-                    print trans_iso + "\t" + "|".join(outline)
+
+
+
+
+            ##### output #####
+            if len(new_set) > 0:
+                outline = []
+                for cluster in new_set:
+                    outline.append(",".join(cluster))
+                print trans_iso + "\t" + "|".join(outline)
 
 
 
