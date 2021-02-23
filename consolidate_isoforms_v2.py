@@ -120,8 +120,6 @@ for trans_iso in list_of_trans:
                     seq1 = ""
                     seq2 = ""
                     for line in infile:
-                        if "." in line:
-                            print "dot", line
                         if line[0] != "#" and line != "\n" and "|" not in line and "." not in line:
                             newline = line.strip().split()
                             if newline != []: # this is necessary (filters out stretches of nonmatching positions)
@@ -129,7 +127,6 @@ for trans_iso in list_of_trans:
                                 if line_number % 2 == 1: # odd numbered lines                                                                                               
                                     seq1 += line.split()[2]
                                 else:                    # even numbered lines
-                                    print line
                                     seq2 += line.split()[2]
                 seqs[ids[0]] = str(seq1)
                 seqs[ids[1]] = str(seq2)
