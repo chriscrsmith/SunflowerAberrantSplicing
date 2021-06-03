@@ -5,34 +5,25 @@
 
 import sys
 
-### read in list of isoforms to look at
-my_isos = []
-with open(sys.argv[1]) as infile:
-    for line in infile:
-        iso = line.strip().split()[0]
-        my_isos.append(iso)
-
-
 
 ### read in the "good_isos" list
 good_isos = {}
-with open(sys.argv[2]) as infile:
+with open(sys.argv[1]) as infile:
     for line in infile:
         new_gene, isos = line.strip().split()
         isos = isos.split(",")
         for iso in isos:
-            if iso in my_isos:
-                old_gene = new_gene.split(".")[0]
-                if old_gene not in good_isos: # some are repeated                                                                                                                          
-                    good_isos[old_gene] = {}
-                good_isos[old_gene][new_gene] = [] # adding in the new gene                                                                                                                
-                for iso in isos:
-                    good_isos[old_gene][new_gene].append(iso)
+            old_gene = new_gene.split(".")[0]
+            if old_gene not in good_isos: # some are repeated                                                                                                                          
+                good_isos[old_gene] = {}
+            good_isos[old_gene][new_gene] = [] # adding in the new gene                                                                                                                
+            for iso in isos:
+                good_isos[old_gene][new_gene].append(iso)
 
                 
 
 ### read in consolidated isoforms
-with open(sys.argv[3]) as infile:
+with open(sys.argv[2]) as infile:
     for line in infile:
         newline = line.strip().split()
         iso = newline[0]
