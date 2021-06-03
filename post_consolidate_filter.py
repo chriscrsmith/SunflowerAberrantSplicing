@@ -27,9 +27,12 @@ with open(sys.argv[1]) as infile:
         isos = isos.split(",")
         old_gene = new_gene.split(".")[0]
         if old_gene in consolidated:
+            keep = True # (default)
             for cluster in consolidated[old_gene]:
-                if len(isos) > len(cluster.split(",")):
-                    print(line.strip())
-                else:
-                    sys.stderr.write("\tfiltered " + old_gene + "\n") 
-                
+                if len(isos) <= len(cluster.split(",")):
+                    keep = False
+                    sys.stderr.write("\tfiltered " + old_gene + "\n")
+            if keep == True:
+                print(line.strip())
+        else:
+            print(line.strip())    
