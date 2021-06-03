@@ -1,6 +1,6 @@
 
 # quick filter to remove genes with no splicing after consolidating alleles from same isoform 
-# example: python post_consolidate_filter.py list_of_important_isoforms.txt good_isos.txt consolidatedIsos.txt > list_of_important_isoforms_consolidated.txt
+# example: python post_consolidate_filter.py good_isos.txt consolidatedIsos.txt > good_isos_filtered.txt
 
 
 import sys
