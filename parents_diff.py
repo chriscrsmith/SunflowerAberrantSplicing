@@ -1,12 +1,20 @@
 
 
 
+
+# to do: I'm getting a singular matrix issue with the manova function, and can't calculate the inverse or the determinate because non-square matrix 
+
+
+
 import sys, os
 from operator import itemgetter
 import numpy as np
 from skbio.stats.composition import ilr
 from statsmodels.multivariate.manova import MANOVA
+from statsmodels.multivariate.pca import PCA
 from scipy import stats
+import unittest
+
 
 trans_path = sys.argv[1]
 goodisos_path = sys.argv[2]
@@ -99,6 +107,7 @@ with open(parent_list) as list_file:
 
 ##### now the business #####
 for trans_iso in list_of_trans_isos:
+#    sys.stderr.write(trans_iso+"\n")
     for old_gene in good_isos:
         for new_gene in good_isos[old_gene]:
             if trans_iso in good_isos[old_gene][new_gene]: # finding the correct "new" gene
@@ -122,6 +131,10 @@ for trans_iso in list_of_trans_isos:
                             isoform_clusters.append(consolidation[iso])
                     else:
                         isoform_clusters.append([iso])
+                # #
+                # # quick check to see if there's still splicing
+                # if len(isoform_clusters) > 1:
+                # #
                 props = [ [0]*len(isoform_clusters) for i in range(6)]
                 for parent in range(6):
                     indiv_props = []
@@ -139,7 +152,7 @@ for trans_iso in list_of_trans_isos:
                             found = True
                     if found == True:
                         count_isos_in_parents += 1
-                print "allele clusters found in parents:", count_isos_in_parents, trans_iso
+                #print "allele clusters found in parents:", count_isos_in_parents, trans_iso
                             
                         
 
@@ -148,6 +161,7 @@ for trans_iso in list_of_trans_isos:
                 ##### ILR transform #####
                 ilrs = [None]*6
                 for parent in range(6):
+                    #ilrs[parent] = list(ilr(props[parent])) # that was easy!
                     ilrs[parent] = ilr(props[parent]) # that was easy!  
                 ilrs = np.array(ilrs)
 
@@ -155,10 +169,17 @@ for trans_iso in list_of_trans_isos:
                 print
                 print
                 print trans_iso
+                #print ilrs
                 if len(ilrs.shape) > 1: # if more than one ILR column, use manova
-                    pops = np.array([1,0,1,1,0,0]) # ['HA89e_out', '1238e_out', 'HA89A_out', 'HA89b_out', '1238A_out', '1238b_out']
-                    manova = MANOVA(endog=ilrs, exog=pops)
-                    print manova.mv_test()
+                    pca_model = PCA(ilrs)
+                    threshold = 0.99
+                    if pca_model.rsquare[1] < threshold:
+                        pops = np.array([1,0,1,1,0,0]) # ['HA89e_out', '1238e_out', 'HA89A_out', 'HA89b_out', '1238A_out', '1238b_out']
+                        manova = MANOVA(endog=ilrs, exog=pops)
+                        print manova.mv_test()
+                    else:
+                        print "skipped MANOVA because isoforms colinear"
+                        
                 else: # if just one ILR column, usa t.test / anova
                     t = stats.ttest_ind([ilrs[0], ilrs[2], ilrs[3]], [ilrs[1], ilrs[4], ilrs[5]])
                     print t
