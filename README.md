@@ -247,6 +247,30 @@ Below is an example workflow.
     ###
     python interaction_scan_v8.py genotype_table.txt phenotype_table.txt 2 10143 stratified
     ###
-   
- 
+
+
+
+
+
+19. Identifying parent isoforms that were missing in hybrids
+
+    ###
+    python other_splicing_errors_v4.py parent_list.txt RIL_list.txt
+    ###
+
+
+
+
+
+20. Filter the missing isos for single copy regions
+
+    ###
+    python filter_single_v3.py filtered_missing.txt transcript_alignments_singleCopy_50perc.txt > missing_parent_isoforms_singleCopy.txt
+    ###
+
+
+
+
+
+
 
