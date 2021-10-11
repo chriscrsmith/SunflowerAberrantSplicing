@@ -5,7 +5,7 @@ Code used for sunflower aberrant splicing project
 
 
 
-Below is an example workflow using Chris's scripts.
+Below is an example workflow.
 
 
 
